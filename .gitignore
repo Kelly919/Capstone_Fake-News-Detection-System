@@ -30,3 +30,6 @@ database/*.sqlite3
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+
+# Dataset files
+data/
