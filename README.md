@@ -3,7 +3,11 @@
 
 ## Project Overview
 
-FakeNewsChecker AI is a web-based application that uses natural language processing (NLP) and machine learning to classify English news text as Fake or Genuine. Users can submit news headlines, articles, or social media posts and view the predicted classification and confidence score.
+FakeNewsChecker AI is a web-based application developed as an Honours capstone project in Artificial Intelligence and Data Science.
+
+The system uses Natural Language Processing (NLP) and machine learning techniques to classify English news content as Fake or Genuine. Users can submit news headlines, articles, or social media posts and receive a predicted classification with a confidence score.
+
+The project aims to demonstrate how AI and machine learning can support the identification of potentially misleading information shared online.
 
 ## Features
 
@@ -40,15 +44,69 @@ FakeNewsChecker AI is a web-based application that uses natural language process
 
 ## Installation
 
-1. Clone the repository.
-2. Create and activate a Python virtual environment.
-3. Install the required packages using `pip install -r requirements.txt`.
-4. Download the NLTK resources required by the preprocessing script.
-5.  Verify that the trained Random Forest model and TF-IDF vectoriser files are available in the `models/` directory.
-6. Start the Flask application with `python app.py`.
-7. Open the local address displayed in the terminal in your browser.
+Prerequisites
 
-## Important Note
+Python installed on your computer.
+
+Git installed on your computer.
+
+Step 1: Clone the repository
+
+`git clone https://github.com/Kelly919/Capstone_Fake-News-Detection-System.git`
+
+Step 2: Navigate to the project folder
+
+`cd Capstone_Fake-News-Detection-System`
+
+Step 3: Create a virtual environment
+
+`python -m venv venv`
+
+Step 4: Activate the virtual environment
+
+For Windows PowerShell:
+
+`.\venv\Scripts\Activate.ps1`
+
+Step 5: Install the required dependencies
+
+`pip install -r requirements.txt`
+
+Step 6: Verify the trained model files
+
+Ensure that the following files are available inside the models/ directory:
+
+- random_forest_model.pkl
+
+- tfidf_vectorizer.pkl
+
+Step 7: Run the application
+
+`python app.py`
+
+Step 8: Open the application
+
+Open the local address displayed in your terminal in your web browser. For example:
+
+`http://127.0.0.1:5000/`
+
+## Dataset Information
+
+The datasets used for training and evaluating the machine learning models are not included in this GitHub repository because of their large file sizes.
+
+The following dataset files are retained locally:
+
+- Fake.csv
+
+- True.csv
+
+- cleaned_news.csv
+
+- preprocessed_news.csv
+
+The trained Random Forest model and TF-IDF vectorizer are included in the repository. Therefore, users can run the application without downloading the original datasets or retraining the models.
+
+However, the datasets are required if users wish to repeat the data preparation, preprocessing, training, and evaluation processes.
 
 ## Important Note
 
