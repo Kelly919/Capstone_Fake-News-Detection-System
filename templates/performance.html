@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Performance | FakeNewsChecker AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        :root {
+            --nav-pink: rgb(226, 14, 246);
+            --purple: #6D28D9;
+            --purple-bright: #8B5CF6;
+            --pink: #EC4899;
+            --page-bg: #FAF5FF;
+            --soft-pink: #FCE7F3;
+            --soft-purple: #EDE9FE;
+            --text: #312E45;
+            --muted: #6B6478;
+            --border: #E9D5FF;
+            --white: #FFFFFF;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--page-bg), var(--soft-pink) 50%, var(--soft-purple));
+            line-height: 1.6;
+        }
+
+        /* Navigation matches the Home page colours and layout */
+        .navbar {
+            width: 100%;
+            background: var(--nav-pink);
+            padding: 18px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 3px 15px rgba(31, 41, 55, 0.10);
+        }
+
+        .navbar .brand {
+            color: var(--purple);
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .navbar nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .navbar nav a {
+            color: var(--purple);
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 0;
+            transition: color .2s ease;
+        }
+
+      
+        .navbar nav a:hover {
+           color: #FFFFFF;
+        }
+
+        .navbar a.active {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 6px;
+}
+
+        .page-wrap {
+            width: min(1180px, 92%);
+            margin: 34px auto 55px;
+        }
+
+        .hero {
+            padding: 30px 32px;
+            margin-bottom: 24px;
+            border-radius: 20px;
+            color: var(--white);
+            background: linear-gradient(120deg, var(--purple), var(--pink));
+            box-shadow: 0 10px 28px rgba(139, 92, 246, .20);
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: clamp(28px, 4vw, 38px);
+            color: var(--white);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            margin: 0;
+            max-width: 780px;
+            color: var(--white);
+        }
+
+        .info-card, .section-card {
+            background: var(--white);
+            border: 1px solid #F3E8FF;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, .09);
+        }
+
+        h2 {
+            color: var(--purple);
+            font-size: 23px;
+            margin: 0 0 18px;
+        }
+
+        h3 {
+            color: var(--purple);
+            margin: 24px 0 12px;
+            font-size: 18px;
+        }
+
+        p { margin-top: 0; }
+
+        .dataset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .info-item {
+            background: linear-gradient(135deg, #FAF5FF, #FFF1F7);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px 17px;
+        }
+
+        .info-item strong {
+            display: block;
+            color: var(--purple);
+            margin-bottom: 4px;
+        }
+
+        .table-wrap { width: 100%; overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 8px;
+            background: var(--white);
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 13px 12px;
+            text-align: center;
+        }
+
+        thead th, table > tbody > tr:first-child th {
+            background: var(--purple);
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .results-table tbody tr:nth-child(even) { background: #FCFAFF; }
+
+        .results-table tbody tr.selected {
+            background: #F3E8FF;
+            font-weight: bold;
+        }
+
+        .selected-badge {
+            display: inline-block;
+            background: #FCE7F3;
+            color: #9D174D;
+            border-radius: 20px;
+            padding: 3px 8px;
+            margin-left: 5px;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .chart {
+            background: #FFFDFF;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+
+        .chart h3 { margin: 0 0 17px; }
+
+        .bar-row {
+            display: grid;
+            grid-template-columns: minmax(125px, 165px) minmax(70px, 1fr) 68px;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+
+        .model-name { font-weight: 600; }
+
+        .bar-container {
+            width: 100%;
+            height: 16px;
+            background: #F3E8FF;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            border-radius: 20px;
+            background: linear-gradient(90deg, var(--purple-bright), var(--pink));
+        }
+
+        .bar-row.best .bar {
+            background: linear-gradient(90deg, #7C3AED, #DB2777);
+        }
+
+        .percentage {
+            text-align: right;
+            font-weight: bold;
+            color: var(--purple);
+            white-space: nowrap;
+        }
+
+        .confusion-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .matrix-card {
+            background: #FFFDFF;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            min-width: 0;
+        }
+
+        .matrix-card h3 { margin: 0 0 10px; }
+
+        .confusion-table {
+            width: 100%;
+            font-size: 12px;
+        }
+
+        .confusion-table th,
+        .confusion-table td {
+            padding: 9px 5px;
+            overflow-wrap: anywhere;
+        }
+
+        .matrix-correct {
+            background: #DCFCE7;
+            color: #166534;
+            font-weight: bold;
+        }
+
+        .matrix-error {
+            background: #FCE7F3;
+            color: #9D174D;
+        }
+
+        .selected-model {
+            background: linear-gradient(135deg, #F3E8FF, #FCE7F3);
+            border: 1px solid #D8B4FE;
+            border-left: 5px solid var(--pink);
+            border-radius: 14px;
+            padding: 20px 22px;
+        }
+
+        .selected-model strong { color: var(--purple); }
+
+        .footnote {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 14px;
+        }
+
+        @media (max-width: 850px) {
+            .metric-grid { grid-template-columns: 1fr; }
+            .confusion-grid { grid-template-columns: 1fr; }
+            .dataset-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 560px) {
+            .navbar { padding: 16px 5%; }
+            .navbar .brand { font-size: 19px; }
+            .navbar nav { gap: 12px; }
+            .navbar nav a { font-size: 14px; }
+            .page-wrap { width: 94%; margin-top: 20px; }
+            .hero, .info-card, .section-card { padding: 19px; }
+            .bar-row {
+                grid-template-columns: 1fr 62px;
+                gap: 7px;
+            }
+            .bar-container { grid-column: 1 / -1; grid-row: 2; }
+            .percentage { grid-column: 2; grid-row: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="brand">🔎 FakeNewsChecker AI</div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/history">History</a>
+            <a href="/performance" class="active">Performance</a>
+        </nav>
+    </header>
+
+    <main class="page-wrap">
+        <section class="hero">
+            <h1>Model Performance Dashboard</h1>
+            <p>
+                This dashboard presents the performance of the supervised machine learning 
+                models evaluated during the development of the Fake News Detection System.
+            </p>
+        </section>
+
+        <section class="info-card">
+            <h2>Dataset &amp; Evaluation Information</h2>
+            <div class="dataset-grid">
+                <div class="info-item">
+                    <strong>Dataset</strong>
+                    Kaggle Fake and Real News dataset
+                </div>
+                <div class="info-item">
+                    <strong>Evaluation Date</strong>
+                    2 October 2026
+                </div>
+            </div>
+            <p class="footnote">
+                The models were trained and evaluated using labelled fake and genuine news articles.
+            </p>
+        </section>
+
+        <section class="section-card">
+            <h2>Model Evaluation Results</h2>
+            <div class="table-wrap">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Accuracy</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>F1-Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Logistic Regression</td>
+                            <td>98.27%</td>
+                            <td>97.79%</td>
+                            <td>98.08%</td>
+                            <td>98.43%</td>
+                        </tr>
+                        <tr>
+                            <td>Naive Bayes</td>
+                            <td>92.77%</td>
+                            <td>93.48%</td>
+                            <td>93.32%</td>
+                            <td>93.40%</td>
+                        </tr>
+                        <tr class="selected">
+                            <td>Random Forest <span class="selected-badge">Selected</span></td>
+                            <td>99.48%</td>
+                            <td>99.46%</td>
+                            <td>99.60%</td>
+                            <td>99.53%</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="footnote">The highlighted row shows the model selected for deployment.</p>
+            </div>
+        </section>
+
+        <section class="section-card">
+            <h2>Performance Metric Comparisons</h2>
+            <div class="metric-grid">
+                <div class="chart">
+                    <h3>Accuracy</h3>
+                    <div class="bar-row">
+                        <div class="model-name">Logistic Regression</div>
+                        <div class="bar-container"><div class="bar" style="width:98.27%"></div></div>
+                        <div class="percentage">98.27%</div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="model-name">Naive Bayes</div>
+                        <div class="bar-container"><div class="bar" style="width:92.77%"></div></div>
+                        <div class="percentage">92.77%</div>
+                    </div>
+                    <div class="bar-row best">
+                        <div class="model-name">Random Forest</div>
+                        <div class="bar-container"><div class="bar" style="width:99.48%"></div></div>
+                        <div class="percentage">99.48%</div>
+                    </div>
+                </div>
+
+                <div class="chart">
+                    <h3>Precision</h3>
+                    <div class="bar-row">
+                        <div class="model-name">Logistic Regression</div>
+                        <div class="bar-container"><div class="bar" style="width:97.79%"></div></div>
+                        <div class="percentage">97.79%</div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="model-name">Naive Bayes</div>
+                        <div class="bar-container"><div class="bar" style="width:93.48%"></div></div>
+                        <div class="percentage">93.48%</div>
+                    </div>
+                    <div class="bar-row best">
+                        <div class="model-name">Random Forest</div>
+                        <div class="bar-container"><div class="bar" style="width:99.46%"></div></div>
+                        <div class="percentage">99.46%</div>
+                    </div>
+                </div>
+
+                <div class="chart">
+                    <h3>Recall</h3>
+                    <div class="bar-row">
+                        <div class="model-name">Logistic Regression</div>
+                        <div class="bar-container"><div class="bar" style="width:98.08%"></div></div>
+                        <div class="percentage">98.08%</div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="model-name">Naive Bayes</div>
+                        <div class="bar-container"><div class="bar" style="width:93.32%"></div></div>
+                        <div class="percentage">93.32%</div>
+                    </div>
+                    <div class="bar-row best">
+                        <div class="model-name">Random Forest</div>
+                        <div class="bar-container"><div class="bar" style="width:99.60%"></div></div>
+                        <div class="percentage">99.60%</div>
+                    </div>
+                </div>
+
+                <div class="chart">
+                    <h3>F1-Score</h3>
+                    <div class="bar-row">
+                        <div class="model-name">Logistic Regression</div>
+                        <div class="bar-container"><div class="bar" style="width:98.43%"></div></div>
+                        <div class="percentage">98.43%</div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="model-name">Naive Bayes</div>
+                        <div class="bar-container"><div class="bar" style="width:93.40%"></div></div>
+                        <div class="percentage">93.40%</div>
+                    </div>
+                    <div class="bar-row best">
+                        <div class="model-name">Random Forest</div>
+                        <div class="bar-container"><div class="bar" style="width:99.53%"></div></div>
+                        <div class="percentage">99.53%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-card">
+            <h2>Confusion Matrix</h2>
+            <p class="footnote">
+                Rows represent the actual class and columns represent the model's predicted class.
+                Green cells are correct predictions; pink cells are errors.
+            </p>
+            <div class="confusion-grid">
+                <div class="matrix-card">
+                    <h3>Logistic Regression</h3>
+                    <div class="table-wrap">
+                        <table class="confusion-table">
+                            <thead><tr><th></th><th>Pred. Fake</th><th>Pred. Genuine</th></tr></thead>
+                            <tbody>
+                                <tr><th>Actual Fake</th><td class="matrix-correct">3395</td><td class="matrix-error">95</td></tr>
+                                <tr><th>Actual Genuine</th><td class="matrix-error">39</td><td class="matrix-correct">4200</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="matrix-card">
+                    <h3>Naive Bayes</h3>
+                    <div class="table-wrap">
+                        <table class="confusion-table">
+                            <thead><tr><th></th><th>Pred. Fake</th><th>Pred. Genuine</th></tr></thead>
+                            <tbody>
+                                <tr><th>Actual Fake</th><td class="matrix-correct">3214</td><td class="matrix-error">276</td></tr>
+                                <tr><th>Actual Genuine</th><td class="matrix-error">283</td><td class="matrix-correct">3956</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="matrix-card">
+                    <h3>Random Forest</h3>
+                    <div class="table-wrap">
+                        <table class="confusion-table">
+                            <thead><tr><th></th><th>Pred. Fake</th><th>Pred. Genuine</th></tr></thead>
+                            <tbody>
+                                <tr><th>Actual Fake</th><td class="matrix-correct">3467</td><td class="matrix-error">23</td></tr>
+                                <tr><th>Actual Genuine</th><td class="matrix-error">17</td><td class="matrix-correct">4222</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="selected-model">
+            <h2>Selected Model: Random Forest</h2>
+            <p>
+                <strong>Random Forest</strong> was selected for deployment because it
+                achieved the strongest overall performance across accuracy, precision,
+                recall, and F1-score in this evaluation.
+            </p>
+        </section>
+    </main>
+</body>
+</html>

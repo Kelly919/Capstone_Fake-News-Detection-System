@@ -1,0 +1,121 @@
+/* =====================================
+   FAKE NEWS DETECTION SYSTEM
+   Shared modern colour theme
+===================================== */
+
+:root {
+    --primary-color: #8B5CF6;
+    --secondary-color: #EC4899;
+    --primary-dark: #6D28D9;
+    --background-color: #FAF5FF;
+    --card-background: #FFFFFF;
+    --text-color: #312E45;
+    --border-color: #E9D5FF;
+    --success-color: #16A34A;
+    --danger-color: #E11D48;
+}
+
+/* Bright pink and purple theme */
+
+body {
+    background: linear-gradient(
+        135deg,
+        #FAF5FF 0%,
+        #FCE7F3 50%,
+        #EDE9FE 100%
+    );
+    color: var(--text-color);
+}
+
+/* Main buttons */
+button,
+.btn,
+input[type="submit"] {
+    background: linear-gradient(
+        135deg,
+        #8B5CF6,
+        #EC4899
+    );
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Button hover effect */
+button:hover,
+.btn:hover,
+input[type="submit"]:hover {
+    background: linear-gradient(
+        135deg,
+        #6D28D9,
+        #DB2777
+    );
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+}
+
+/* Cards */
+.card,
+.main-card,
+.result-card {
+    background: #FFFFFF;
+    border: 1px solid #F3E8FF;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.10);
+}
+
+/* Headings */
+h1,
+h2,
+h3 {
+    color: #6D28D9;
+}
+
+/* Text fields */
+textarea,
+input[type="text"],
+input[type="search"] {
+    border: 2px solid #E9D5FF;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="search"]:focus {
+    outline: none;
+    border-color: #EC4899;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
+}
+
+/* Links */
+a {
+    color: #8B5CF6;
+}
+
+a:hover {
+    color: #DB2777;
+}
+
+/* Confidence bar */
+.confidence-track {
+    background: #F3E8FF;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    background: linear-gradient(
+        90deg,
+        #8B5CF6,
+        #EC4899
+    );
+    height: 100%;
+    border-radius: 20px;
+}
+
+body {
+    background: rgb(118, 2, 134) !important;
+}
